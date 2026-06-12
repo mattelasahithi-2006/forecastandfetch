@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Login</title>
+
+    <style>
+        body{
+            font-family: Arial, sans-serif;
+            background-color: #dfe8f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .container{
+            text-align: center;
+        }
+
+        h1{
+            margin-bottom: 20px;
+            font-size: 40px;
+            font-weight: bold;
+        }
+
+        form{
+            background-color: #f2f2f2;
+            padding: 50px;
+            border-radius: 5px;
+            width: 350px;
+            margin: auto;
+            text-align: left;
+        }
+
+        label{
+            font-size: 18px;
+            display: block;
+            margin-top: 15px;
+        }
+
+        input[type=email],
+        input[type=password]{
+            width: 100%;
+            padding: 12px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        button{
+            width: 100%;
+            background-color: #4CAF50;
+            color: white;
+            padding: 14px;
+            margin-top: 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 18px;
+        }
+
+        button:hover{
+            background-color: #45a049;
+        }
+
+        a{
+            display: block;
+            margin-top: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: purple;
+            font-size: 16px;
+        }
+
+        a:hover{
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <h1>Welcome to Login Page</h1>
+
+    <form id="loginForm">
+
+        <label for="email">Email</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter Email"
+            required>
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter Password"
+            required>
+
+        <button type="submit" onclick="validate()">Login</button>
+
+    </form>
+
+    <a href="register.html">Don't have an account? Register here</a>
+
+</div>
+
+<!-- <script>
+
+async function validate() {
+    const eemail=document.getElementById("email").value;
+  const epwd=document.getElementById("password").value;
+    const user=await fetch("https://localhost:3000/user")
+    if(user.some(s => s.email === eemail && s.password === epwd)){
+
+    alert("Login successful");
+
+    window.location.href = "home.html";
+
+}
+else{
+
+    alert("Invalid email or password");
+
+}
+}
+
+</script> -->
+<script>
+
+document.getElementById("loginForm")
+.addEventListener("submit", validate);
+
+
+async function validate(event) {
+
+    event.preventDefault();
+
+
+    const eemail = document.getElementById("email").value.trim();
+    const epwd = document.getElementById("password").value;
+
+
+    try{
+
+        const response = await fetch("http://localhost:3000/user");
+
+
+        const users = await response.json();
+
+
+        let foundUser = users.some(s =>
+            s.email === eemail &&
+            s.password === epwd
+        );
+
+
+        if(foundUser){
+
+            alert("Login successful");
+
+            window.location.href = "home.html";
+
+        }
+        else{
+
+            alert("Invalid email or password");
+
+        }
+
+    }
+
+    catch(error){
+
+        alert("Server not connected");
+
+        console.log(error);
+
+    }
+
+}
+
+</script>
+</body>
+</html>

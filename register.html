@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family: Arial, sans-serif;
+    background-color:#e6f0ff;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+}
+
+.container{
+    width:100%;
+    max-width:500px;
+}
+
+h1{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+form{
+    background:#f2f2f2;
+    padding:40px;
+    border-radius:8px;
+    box-shadow:0 2px 10px rgba(0,0,0,0.1);
+}
+
+label{
+    display:block;
+    margin-top:15px;
+    margin-bottom:5px;
+    font-weight:bold;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:4px;
+    font-size:16px;
+}
+
+button{
+    width:100%;
+    margin-top:20px;
+    padding:12px;
+    background-color:#4CAF50;
+    color:white;
+    border:none;
+    border-radius:4px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+button:hover{
+    background-color:#45a049;
+}
+
+a{
+    display:block;
+    text-align:center;
+    margin-top:15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Register as Student</h1>
+
+    <form id="registerForm">
+
+        <label for="email">Email</label>
+        <input
+            type="email"
+            id="email"
+            placeholder="Enter Email"
+            required>
+
+        <label for="rollno">Roll Number</label>
+        <input
+            type="text"
+            id="rollno"
+            placeholder="Enter Roll Number"
+            required>
+
+        <label for="password">Password</label>
+        <input
+            type="password"
+            id="password"
+            placeholder="Enter Password"
+            required>
+
+        <label for="conpwd">Confirm Password</label>
+        <input
+            type="password"
+            id="conpwd"
+            placeholder="Confirm Password"
+            required>
+
+        <button type="submit">Register</button>
+
+        <a href="login.html">Already have an account? Login here</a>
+
+    </form>
+
+</div>
+
+<script>
+
+document.getElementById("registerForm")
+.addEventListener("submit", async function(event){
+
+event.preventDefault();
+
+
+let email = document.getElementById("email").value.trim();
+let rollno = document.getElementById("rollno").value.trim();
+let password = document.getElementById("password").value;
+let conpwd = document.getElementById("conpwd").value;
+
+
+// Email Validation
+let emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+if(!emailPattern.test(email)){
+    alert("Enter valid email");
+    return;
+}
+
+
+// Roll number validation
+let rollPattern = /^[0-9]{6,10}$/;
+
+if(!rollPattern.test(rollno)){
+    alert("Roll number must be 6-10 digits");
+    return;
+}
+
+
+// Password
+if(password.length < 4){
+    alert("Password should contain minimum 4 characters");
+    return;
+}
+
+
+// Confirm password
+
+if(password !== conpwd){
+    alert("Passwords do not match");
+    return;
+}
+
+
+
+// check local storage
+
+let users = JSON.parse(localStorage.getItem("users")) || [];
+
+
+let exists = users.some(u =>
+    u.email === email ||
+    u.rollno === rollno
+);
+
+
+if(exists){
+    alert("Already registered");
+    return;
+}
+
+
+
+let user = {
+
+    email: email,
+    rollno: rollno,
+    password: password
+
+};
+
+
+
+// save in local storage
+
+users.push(user);
+
+localStorage.setItem(
+    "users",
+    JSON.stringify(users)
+);
+
+
+
+// send to json server
+
+try{
+
+let response = await fetch(
+"http://localhost:3000/user",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify(user)
+
+});
+
+
+if(response.ok){
+
+alert("Registration Successful");
+
+document
+.getElementById("registerForm")
+.reset();
+
+
+setTimeout(()=>{
+window.location.href="login.html";
+},1000);
+
+
+}
+
+
+}
+catch(error){
+
+console.log(error);
+alert("Server error");
+
+}
+
+
+});
+
+</script>
+</body>
+</html>
